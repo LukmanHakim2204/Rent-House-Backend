@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\TransactionResource\Pages;
 use App\Filament\Resources\TransactionResource\RelationManagers;
+use Filament\Tables\Actions\Action;
 
 class TransactionResource extends Resource
 {
@@ -103,8 +104,16 @@ class TransactionResource extends Resource
                         'cenceled' => 'Cenceled',
                     ]),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->actions([Action::make('Approve')
+                ->button()
+                ->color('success')
+                ->requiresConfirmation()
+                ->action(function (Transaction $transaction) {
+                    Transaction::Find($transaction->id)->update([
+                        'status' => 'approved'
+                    ]);
+                })
+                ->hidden(fn(Transaction $transaction) => $transaction->status !== 'waiting'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
