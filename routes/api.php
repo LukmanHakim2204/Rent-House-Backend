@@ -12,5 +12,5 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     ]);
 });
 
-Route::resource('listing', ListingController::class)->only(['index']);
+Route::resource('listing', ListingController::class)->only(['index', 'show']);
 require __DIR__ . '/auth.php';
